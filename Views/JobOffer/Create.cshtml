@@ -1,0 +1,150 @@
+﻿
+@{
+    ViewData["Title"] = "Create";
+}
+<div class="row page-box">
+    <div class="col-sm-12">
+        <h2>New Job Offer</h2>
+        @using (Html.BeginForm("Create"))
+        {
+          
+        <div class="form-group">
+            <label>Job Title</label>
+            <input id="jobtitle" type="text" class="form-control">
+        </div>
+            <div class="form-group">
+                <label>Company</label>
+                <select class = "form-control" id="companyid">
+                    @foreach (var comp in Model.Companies)
+                    {
+                        <option value="@comp.Id">@comp.Name</option>
+                    }
+                </select>
+               
+            </div>
+            <div class="form-group">
+                <label>Location</label>
+                <input id="location" type="text" class="form-control">
+            </div>
+            <div class="form-group">
+             
+                    <label>Salary</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="salary1">PLN</span>
+                    </div>
+                    <input id="salaryfrom" type="number" class="form-control" placeholder="From">
+                    <div class="input-group-append">
+                        <span class="input-group-text">.00</span>
+                    </div>
+                </div>
+              
+            </div>
+            <div class="form-group">
+                <label>Salary</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="salary1">PLN</span>
+                    </div>
+                    <input id="salaryto" type="number" class="form-control" placeholder="To">
+                    <div class="input-group-append">
+                        <span class="input-group-text">.00</span>
+                    </div>
+                </div>
+               
+            </div>
+            <div class="form-group">
+               <label>Valid Until</label>
+               <div class="input-group">
+                   <input id="validuntil" type="date" class="form-control">
+                   <div class="input-group-append">
+                       <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
+                   </div>
+               </div>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="description" class="form-control">
+</textarea>
+            </div>
+            <a asp-area="" asp-controller="JobOffer" asp-action="Index">
+                <button type="button" class="btn btn-rounded btn-secondary mr-2">
+                    <i class="fas fa-chevron-left pr-2"></i>
+                    Cancel
+                </button>
+            </a>
+            <button type="button"  id="button-create" class="btn btn-rounded btn-primary">
+                <i class="fas fa-check pr-2"></i>
+                Save
+            </button>
+        }
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+
+            $(document).ready(function () {
+                $("#button-create").click(function () {
+
+                    if ($("#jobtitle").val() == "")
+                        document.getElementById("jobtitle").setAttribute("style", "border-color: red;");
+                    else
+                        document.getElementById("jobtitle").setAttribute("style", "border-color: gray;");
+                    if ($("#description").val() == "")
+                        document.getElementById("description").setAttribute("style", "border-color: red;");
+                    else
+                        document.getElementById("description").setAttribute("style", "border-color: grey;");
+
+                    if (($("#jobtitle").val() != "") && ($("#description").val() != ""))
+                    {
+
+
+                    var cos = $("jobtitle").val();
+                    const offer =
+                    {
+                        JobTitle: $("#jobtitle").val(),
+                        CompanyId: $("#companyid").val(),
+                        SalaryFrom: $("#salaryfrom").val(),
+                        SalaryTo: $("#salaryto").val(),
+                        Location: $("#location").val(),
+                        Description: $("#description").val(),
+                        ValidUntil: $("#validuntil").val(),
+
+                    };
+                    
+                    saveData(JSON.stringify(offer));
+
+                    window.location = '@Url.Action("Index", "JobOffer")';
+                    
+                    }
+
+                })
+            });
+            function saveData(offer) {
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/JobOffer/Create',
+                    dataType: 'json',
+                    contentType:'application/json; charset=utf-8',
+                    data: offer,
+                    success: function (result) {
+                        alert('Success!');
+                    },
+                    error: function (result) {
+                        alert('Error! Czemu znowu!!!');
+                        console.log(result);
+                    }
+                }).done(function () {
+
+
+                });
+            }
+
+    </script>
+    }

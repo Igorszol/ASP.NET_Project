@@ -1,0 +1,187 @@
+﻿
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="row page-box">
+    <div class="col-sm-12">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-12 col-md-4 d-flex align-items-center py-2">
+                    <h3 class="font-weight-bold mb-0">
+                        My Job Offer lisr
+                    </h3>
+                    <div>
+
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 py-2">
+
+                    <div class="input-group search-input"
+                         style="border-radius: 20px">
+                        <input name="search"
+                               id="search"
+                               type="text"
+                               class="form-control"
+                               placeholder="Search by offer title..."
+                               aria-label="Search by offer title"
+                               aria-describedby="button-search">
+                        <div class="input-group-append">
+                            <button id="button-search"
+                                    class="btn btn-primary"
+                                    type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-12 col-sm-4 text-right py-2">
+                    <a href="@Url.Action("Create", "JobOffer")">
+                        <button class="btn btn-rounded btn-outline-primary"
+                                data-toggle="modal">
+                            <i class="fa fa-plus pr-3"></i>
+                            Add Job Offer
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div id="updatePanel"/>
+
+        
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        var currentPage = 1;
+        $(document).ready(function () {
+            var searchValue = $("#search").val();
+            searchData(1, searchValue);
+        });
+
+
+        $(document).ready(function () {
+            $("#button-search").click(function () {
+                var searchValue = $("#search").val();
+                searchData(1, searchValue);
+            })
+        });
+        function searchData(pageNo,searchValue) {
+            var $loading = "<div class='loading'>Please wait...</div>";
+            $('#updatePanel').prepend($loading);
+            $.ajax({
+                url: '/JobOffer/MyList',
+                type: 'GET',
+                data: { searchString: searchValue, pageNo: pageNo },
+                dataType: 'json',
+                success: function (data) {
+                    var $table = $('<table/>').addClass('table table-striped table-hover');
+                    var $header = $('<thead/>').html('<tr><th style="width: 170px">JobTitle</th><th style="width: 0px">Company</th><th>Location</th><th>Created</th></tr>');
+                    $table.append($header);
+                    $.each(data.jobOffers, function (i, emp) {
+
+                        var $row = $('<tr/>');
+                        $row.append(('<td><a href="/JobOffer/Details/' + emp.id + '">'+emp.jobTitle+'</a></td>'));
+                        $row.append($('<td/>').html(emp.company.name));
+                        $row.append($('<td/>').html(emp.location));
+                        $row.append($('<td/>').html(new Date(emp.created).toLocaleDateString("pl")));
+                        $table.append($row);
+                    });
+
+                    var totalPage = parseInt(data.totalPage);
+                    var $footer = $('<tr/>');
+                    var $footerTD = $('<td/>').attr('colspan', 4).addClass('footerContent');
+
+                    if (totalPage > 0) {
+                        for (var i = 1; i <= totalPage; i++) {
+                            var $page = $('<span/>').addClass((i == pageNo) ? "current" : "");
+                            $page.html((i == pageNo) ? i : "<button onclick='searchData(" + i + ", " + searchValue + ");'>" + i + "</button>");
+                            $footerTD.append($page);
+                        }
+                        $footer.append($footerTD);
+                    }
+                    $table.append($footer);
+
+                    $('#updatePanel').html($table);
+                },
+                error: function () {
+                    alert('Error! Please try again.');
+                }
+            }).done(function () {
+
+
+            });
+        }
+
+    </script>
+}
+
+
+
+<style>
+
+    #updatePanel {
+        width: 95%;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .loading {
+        float: left;
+        position: absolute;
+        margin-left: 40%;
+        width: 200px;
+        top: 100px;
+        padding: 3px;
+        border: 1px solid rgb(253, 0, 0);
+        background-color: #6E6E6E;
+        text-align: center;
+    }
+
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+
+    span.current {
+        cursor: auto !important;
+        background-color: #6E6E6E !important;
+        color: #ffffff;
+        font-weight: bold;
+        padding: 5px 10px;
+        border: 1px solid #000000;
+        margin-right: 4px;
+    }
+
+    td.footerContent span a {
+        display: inline-block;
+        padding: 3px 10px;
+        background-color: chartreuse;
+        margin-right: 4px;
+        border: 1px solid #998787;
+        cursor: pointer;
+    }
+
+    td.footerContent span a {
+        text-decoration: none;
+    }
+
+    td.footerContent {
+        text-align: right;
+    }
+</style>

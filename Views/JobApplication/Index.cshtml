@@ -1,0 +1,72 @@
+﻿
+@model IEnumerable<JobApplication>
+<div class="row page-box">
+    <div class="col-sm-12">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-12 col-md-4 d-flex align-items-center py-2">
+                    <h3 class="font-weight-bold mb-0">
+                        Job Applications list
+                    </h3>
+                </div>
+                <div class="col-12 col-md-4 py-2">
+                    @using (Html.BeginForm("Index", "JobApplication", FormMethod.Get))
+                    {
+                        <div class="input-group search-input"
+                             style="border-radius: 20px">
+                            <input name="search"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="Search by offer title..."
+                                   aria-label="Search by offer title"
+                                   aria-describedby="button-search">
+                            <div class="input-group-append">
+                                <button id="button-search"
+                                        class="btn btn-primary"
+                                        type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+
+                    <th scope="col">Application</th>
+                    <th scope="col">Job Title</th>
+                    <th scope="col">Company</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Created</th>
+                 
+                </tr>
+            </thead>
+            <tbody>
+              
+                @foreach (var app in Model.OrderBy(o => o.JobOffer.Created))
+                {
+                <tr>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <td>@app.FirstName @app.LastName</td>
+                    }
+                    else
+                    {
+                        <td>@Html.ActionLink(app.FirstName + " " + app.LastName, "Details", new { id = app.Id })</td>
+                    }
+                    <td>@Html.ActionLink(app.JobOffer.JobTitle, "Details", "JobOffer", new { id = app.JobOffer.Id })</td>
+                    <td>@app.JobOffer.Company.Name</td>
+                    <td>@app.JobOffer.Location</td>
+                    <td>@app.JobOffer.Created</td>
+                </tr>
+
+
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

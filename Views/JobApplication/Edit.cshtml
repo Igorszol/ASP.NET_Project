@@ -1,0 +1,55 @@
+﻿@model JobApplication
+@{
+    ViewBag.Title = "Edit";
+}
+<div class="row">
+    <div class="col-sm-12">
+        <h2>Edit Job Application</h2>
+        @using (Html.BeginForm("Edit", "JobApplication", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.Id)
+            @Html.HiddenFor(m => m.JobOfferId)
+            <div class="form-group">
+                <h4>@Model.JobOffer.JobTitle</h4>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.FirstName)
+                @Html.EditorFor(m => m.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.FirstName)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.LastName)
+                @Html.EditorFor(m => m.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.LastName)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.PhoneNumber)
+                @Html.EditorFor(m => m.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.PhoneNumber)
+            </div>
+           
+            <div class="form-group">
+                @Html.LabelFor(m => m.CvUrl)<br />
+                @if (@Model.CvUrl != "")
+                {
+                    <a href="@Model.CvUrl" target="_blank">Old CV File</a><br />
+                }
+
+                @Html.EditorFor(m => m.CvUrl, new { htmlAttributes = new { @type = "file" } })
+
+            </div>
+            <a asp-controller="JobApplication" asp-action="Details" asp-route-id="@Model.Id">
+                <button type="button" class="btn btn-rounded btn-secondary mr-2">
+                    <i class="fas fa-chevron-left pr-2"></i>
+                    Cancel
+                </button>
+            </a>
+            <button type="submit" class="btn btn-rounded btn-primary">
+                <i class="fas fa-check pr-2"></i>
+                Save
+            </button>
+        }
+    </div>
+</div> 
